@@ -1,0 +1,57 @@
+-- $Id: armwar.lua 3064 2008-10-20 02:05:50Z det $
+unitDef = {
+  unitname            = "armwar",
+  name                = "Warrior",
+  description         = "Riot Kbot",
+  acceleration        = 0.072,
+  bmcode              = "1",
+  brakeRate           = 0.238,
+  buildCostEnergy     = 216.171,
+  buildCostMetal      = 216.171,
+  builder             = false,
+  buildTime           = 216.171,
+  canAttack           = true,
+  canGuard            = true,
+  canMove             = true,
+  canPatrol           = true,
+  canstop             = "1",
+  category            = "MOBILE SINK",
+  corpse              = "DEAD",
+
+  customParams        = {
+    helptext = "The Warrior is a riot kbot. Its devastating heavy Energy Machine Gun is effective vs most enemy units, in particular raiders. It performs poorly versus static defense, so do not use it as an assault unit. Counter by staying out of their range, as they are slow.",
+  },
+
+  defaultmissiontype  = "Standby",
+  explodeAs           = "SMALL_UNITEX",
+  footprintX          = 2,
+  footprintZ          = 2,
+  iconType            = "kbotriot",
+  idleAutoHeal        = 5,
+  idleTime            = 1800,
+  maneuverleashlength = "1",
+  mass                = 108.0855,
+  maxDamage           = 880,
+  maxSlope            = 18,
+  maxVelocity         = 1.71,
+  maxWaterDepth       = 22,
+  minCloakDistance    = 75,
+  movementClass       = "KBOT2",
+  noAutoFire          = false,
+  noChaseCategory     = "VTOL",
+  objectName          = "Spherewarrior.s3o",
+  seismicSignature    = 4,
+  selfDestructAs      = "SMALL_UNIT",
+
+  side                = "ARM",
+  sightDistance       = 330,
+  smoothAnim          = true,
+  steeringmode        = "2",
+  TEDClass            = "KBOT",
+  turnRate            = 770,
+  upright             = true,
+  workerTime          = 0,
+
+}
+
+return lowerkeys({ armwar = unitDef })
