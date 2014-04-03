@@ -10,7 +10,7 @@
 
 return {
 	name='Custom Unit Shaders',
-	version='1.0',
+	version='1.1',
 	mutator='',
 	game='',
 	shortGame='',

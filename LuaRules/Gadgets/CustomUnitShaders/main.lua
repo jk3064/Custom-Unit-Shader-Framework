@@ -22,6 +22,8 @@ function gadget:GetInfo()
   }
 end
 
+local engineIsMin97 = (Script.IsEngineMinVersion and Script.IsEngineMinVersion(96,0,1))
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- Synced
@@ -31,16 +33,13 @@ end
 
 if (gadgetHandler:IsSyncedCode()) then
 
+if (not engineIsMin97) then
   function gadget:UnitFinished(unitID,unitDefID,teamID)
     SendToUnsynced("unitshaders_finished", unitID, unitDefID,teamID)
   end
 
   function gadget:UnitDestroyed(unitID,unitDefID,teamID)
     SendToUnsynced("unitshaders_destroyed", unitID, unitDefID,teamID)
-  end
-
-  function gadget:UnitReverseBuild(unitID,unitDefID,teamID)
-    SendToUnsynced("unitshaders_reverse", unitID, unitDefID,teamID)
   end
 
   function gadget:UnitGiven(unitID,unitDefID,teamID)
@@ -53,6 +52,11 @@ if (gadgetHandler:IsSyncedCode()) then
 
   function gadget:UnitDecloaked(unitID,unitDefID,teamID)
     SendToUnsynced("unitshaders_decloak", unitID, unitDefID,teamID)
+  end
+end
+
+  function gadget:UnitReverseBuild(unitID,unitDefID,teamID)
+    SendToUnsynced("unitshaders_reverse", unitID, unitDefID,teamID)
   end
 
   --// block first try, so we have enough time to disable the lua UnitRendering
@@ -460,13 +464,15 @@ function gadget:Initialize()
   end
 
   --// insert synced actions
-  gadgetHandler:AddSyncAction("unitshaders_finished", UnitFinished)
-  gadgetHandler:AddSyncAction("unitshaders_destroyed", UnitDestroyed)
-  gadgetHandler:AddSyncAction("unitshaders_reverse", UnitReverseBuild)
-  gadgetHandler:AddSyncAction("unitshaders_given", UnitGiven)
-  gadgetHandler:AddSyncAction("unitshaders_cloak", UnitCloaked)
-  gadgetHandler:AddSyncAction("unitshaders_decloak", UnitDecloaked)
+  if (not engineIsMin97) then
+    gadgetHandler:AddSyncAction("unitshaders_finished", UnitFinished)
+    gadgetHandler:AddSyncAction("unitshaders_destroyed", UnitDestroyed)
+    gadgetHandler:AddSyncAction("unitshaders_given", UnitGiven)
+    gadgetHandler:AddSyncAction("unitshaders_cloak", UnitCloaked)
+    gadgetHandler:AddSyncAction("unitshaders_decloak", UnitDecloaked)
+  end
 
+  gadgetHandler:AddSyncAction("unitshaders_reverse", UnitReverseBuild)
   gadgetHandler:AddChatAction("normalmapping", ToggleNormalmapping)
 end
 
