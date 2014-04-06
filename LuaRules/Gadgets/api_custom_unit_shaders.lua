@@ -53,6 +53,15 @@ if (not engineIsMin97) then
   function gadget:UnitDecloaked(unitID,unitDefID,teamID)
     SendToUnsynced("unitshaders_decloak", unitID, unitDefID,teamID)
   end
+
+  function gadget:GameFrame()
+    for i,uid in ipairs(Spring.GetAllUnits()) do
+      if not select(3,Spring.GetUnitIsStunned(uid)) then --// inbuild?
+        gadget:UnitFinished(uid,Spring.GetUnitDefID(uid),Spring.GetUnitTeam(uid))
+      end
+    end
+    gadgetHandler:RemoveCallIn('GameFrame')
+  end
 end
 
   function gadget:UnitReverseBuild(unitID,unitDefID,teamID)
@@ -78,15 +87,6 @@ end
     return true
   end
 
-  function gadget:GameFrame()
-    for i,uid in ipairs(Spring.GetAllUnits()) do
-      if not select(3,Spring.GetUnitIsStunned(uid)) then --// inbuild?
-        gadget:UnitFinished(uid,Spring.GetUnitDefID(uid),Spring.GetUnitTeam(uid))
-      end
-    end
-    gadgetHandler:RemoveCallIn('GameFrame')
-  end
-
   return
 end
 
@@ -99,6 +99,11 @@ end
 if (not gl.CreateShader) then
   return false
 end
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+VFS.Include("luarules/utilities/unitrendering.lua", nil, VFS.BASE)
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -411,12 +416,25 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+function gadget:GameFrame()
+	for i,uid in ipairs(Spring.GetAllUnits()) do
+		if not select(3,Spring.GetUnitIsStunned(uid)) then --// inbuild?
+			gadget:UnitFinished(uid,Spring.GetUnitDefID(uid),Spring.GetUnitTeam(uid))
+		end
+	end
+	gadgetHandler:RemoveCallIn('GameFrame')
+end
+
+
 --// Workaround: unsynced LuaRules doesn't receive Shutdown events
 Shutdown = Script.CreateScream()
 Shutdown.func = function()
   --// unload textures, so the user can do a `/luarules reload` to reload the normalmaps
   for i=1,#loadedTextures do
     gl.DeleteTexture(loadedTextures[i])
+  end
+  for i,uid in ipairs(Spring.GetAllUnits()) do
+    Spring.UnitRendering.SetLODCount(uid,0)
   end
 end
 
@@ -430,7 +448,7 @@ function gadget:Initialize()
   --// load the materials config files
   local unitMaterialDefs = {}
   do
-    local MATERIALS_DIR = GADGET_DIR .. "UnitMaterials/"
+    local MATERIALS_DIR = "ModelMaterials/"
 
     local files = VFS.DirList(MATERIALS_DIR)
     table.sort(files)

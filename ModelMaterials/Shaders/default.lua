@@ -74,6 +74,8 @@ return {
 //#define use_normalmapping
 //#define flip_normalmap
 //#define use_shadows
+//#define flipAlpha
+//#define tex1Alpha
 
     %%FRAGMENT_GLOBAL_NAMESPACE%%
 
@@ -125,7 +127,14 @@ return {
        float a    = max( dot(normal, sunPos), 0.0);
        vec3 light = a * sunDiffuse + sunAmbient;
 
+       vec4 albedoColor = texture2D(textureS3o1, gl_TexCoord[0].st);
        vec4 extraColor  = texture2D(textureS3o2, gl_TexCoord[0].st);
+
+    #ifdef tex1Alpha
+       float aca = albedoColor.a;
+       albedoColor.a = extraColor.a;
+       extraColor.a  = aca;
+    #endif
 
        vec3 reflectDir = reflect(cameraDir, normal);
        vec3 specular   = textureCube(specularTex, reflectDir).rgb * extraColor.g * 4.0;
@@ -145,10 +154,14 @@ return {
        reflection  = mix(light, reflection, extraColor.g); // reflection
        reflection += extraColor.rrr; // self-illum
 
-       gl_FragColor     = texture2D(textureS3o1, gl_TexCoord[0].st);
+       gl_FragColor     = albedoColor;
        gl_FragColor.rgb = mix(gl_FragColor.rgb, teamColor.rgb, gl_FragColor.a); // teamcolor
        gl_FragColor.rgb = gl_FragColor.rgb * reflection + specular;
        gl_FragColor.a   = extraColor.a;
+    #ifdef flipAlpha
+       gl_FragColor.a   = 1.0 - gl_FragColor.a;
+    #endif
+
        //gl_FragColor.rgb = mix(gl_Fog.color.rgb, gl_FragColor.rgb, fogFactor); // fog
        //gl_FragColor.a = teamColor.a; // far fading
        //gl_FragColor.rgb = normal;
