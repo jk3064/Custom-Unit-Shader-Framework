@@ -1,7 +1,7 @@
 
 return {
 	name='Custom Unit Shaders',
-	version='1.1',
+	version='$VERSION',
 	modtype=0,
 }
 
