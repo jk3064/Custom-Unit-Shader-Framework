@@ -397,9 +397,11 @@ gadget.UnitReverseBuild = gadget.UnitDestroyed
 gadget.UnitCloaked   = gadget.UnitDestroyed
 gadget.UnitDecloaked = gadget.UnitFinished
 
-function gadget:UnitGiven(...)
-  gadget:UnitDestroyed(...)
-  gadget:UnitFinished(...)
+function gadget:UnitGiven(unitID,...)
+  if not select(3, Spring.GetUnitIsStunned(unitID)) then
+    gadget:UnitDestroyed(unitID, ...)
+    gadget:UnitFinished(unitID, ...)
+  end
 end
 
 --------------------------------------------------------------------------------
