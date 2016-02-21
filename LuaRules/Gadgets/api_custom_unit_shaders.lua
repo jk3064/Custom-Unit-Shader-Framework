@@ -23,6 +23,7 @@ function gadget:GetInfo()
 end
 
 local engineIsMin97 = (Script.IsEngineMinVersion and Script.IsEngineMinVersion(96,0,1))
+local engineIsMin101 = (Script.IsEngineMinVersion and Script.IsEngineMinVersion(101,0,0))
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -373,7 +374,13 @@ function gadget:UnitFinished(unitID,unitDefID,teamID)
   end
 end
 
-function gadget:UnitDestroyed(unitID,unitDefID)
+if not engineIsMin101 then
+  function gadget:UnitDestroyed(unitID,unitDefID)
+    self:RenderUnitDestroyed(unitID,unitDefID)
+  end
+end
+
+function gadget:RenderUnitDestroyed(unitID,unitDefID)
   Spring.UnitRendering.DeactivateMaterial(unitID,3)
 
   local mat = drawUnitList[unitID]
@@ -386,10 +393,10 @@ function gadget:UnitDestroyed(unitID,unitDefID)
 end
 
 
-function gadget:DrawUnit(unitID)
+function gadget:DrawUnit(unitID, drawMode)
   local mat = drawUnitList[unitID]
   if (mat) then
-    return mat.DrawUnit(unitID, mat)
+    return mat.DrawUnit(unitID, mat, drawMode)
   end
 end
 
@@ -486,7 +493,7 @@ function gadget:Initialize()
   --// insert synced actions
   if (not engineIsMin97) then
     gadgetHandler:AddSyncAction("unitshaders_finished", UnitFinished)
-    gadgetHandler:AddSyncAction("unitshaders_destroyed", UnitDestroyed)
+    gadgetHandler:AddSyncAction("unitshaders_destroyed", RenderUnitDestroyed)
     gadgetHandler:AddSyncAction("unitshaders_given", UnitGiven)
     gadgetHandler:AddSyncAction("unitshaders_cloak", UnitCloaked)
     gadgetHandler:AddSyncAction("unitshaders_decloak", UnitDecloaked)
